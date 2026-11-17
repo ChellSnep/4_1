@@ -82,6 +82,35 @@ app.get("/math/gcdlcm/:a/:b", (req, res) => {
   res.json({ gcd: g, lcm });
 });
 
+app.get("/math/average", (req, res) => {
+  const raw = req.query.nums;
+
+  if (typeof raw != "string" || raw.trim() === "") {
+    return res.status(400).json({ error: "Invalid input" });
+  }
+
+  const nums = raw.split(",").map(Number);
+
+  if (nums.some((x) => !Number.isFinite(x) || x <= 0)) {
+    return res.status(400).json({ error: "Invalid input" });
+  }
+
+  const n = nums.length;
+  const round = (x) => Number(x.toFixed(2));
+
+  const arytmetyczna = nums.reduce((sum, x) => sum + x, 0) / n;
+  const geometryczna = Math.exp(
+    nums.reduce((sum, x) => sum + Math.log(x), 0) / n,
+  );
+  const harmoniczna = n / nums.reduce((sum, x) => sum + 1 / x, 0);
+
+  res.json({
+    arytmetyczna: round(arytmetyczna),
+    geometryczna: round(geometryczna),
+    harmoniczna: round(harmoniczna),
+  });
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
