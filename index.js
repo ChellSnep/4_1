@@ -66,6 +66,22 @@ app.get("/math/isprime/:n", (req, res) => {
   res.json({ number: n, isPrime });
 });
 
+app.get("/math/gcdlcm/:a/:b", (req, res) => {
+  const a = Number(req.params.a);
+  const b = Number(req.params.b);
+
+  if (!Number.isInteger(a) || !Number.isInteger(b) || a < 1 || b < 1) {
+    return res.status(400).json({ error: "Invalid input" });
+  }
+
+  const gcd = (x, y) => (y === 0 ? x : gcd(y, x % y));
+
+  const g = gcd(a, b);
+  const lcm = (a * b) / g;
+
+  res.json({ gcd: g, lcm });
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
